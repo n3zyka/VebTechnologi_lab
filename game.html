@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Міні-гра: Збір даних — Штучний Інтелект</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .game-card {
+            text-align: center;
+            user-select: none;
+        }
+
+        .stats-panel {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background-color: #f1f5f9;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+
+        #gameArea {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            background-color: #0f172a;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 2px solid #334155;
+            cursor: pointer;
+        }
+
+        .data-target {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #ffffff;
+            transition: transform 0.1s ease;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .data-target:active {
+            transform: scale(0.9);
+        }
+
+        .good-data {
+            background-color: #10b981;
+        }
+
+        .bad-data {
+            background-color: #ef4444;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка з навігацією -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">AI & Data Science</div>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-button">Головна</a></li>
+                    <li><a href="directions.html" class="nav-button">Напрямки</a></li>
+                    <li><a href="applications.html" class="nav-button">Сфери застосування</a></li>
+                    <li><a href="learning.html" class="nav-button">Навчання та старт</a></li>
+                    <li><a href="demo.html" class="nav-button">Демо анімацій</a></li>
+                    <li><a href="game.html" class="nav-button">Міні-гра</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="page-header">
+            <h1>Міні-гра: Навчання Моделі ШІ</h1>
+            <p>Збирайте корисні дані (зелені кружечки) для тренування ШІ та уникайте багів (червоні)!</p>
+        </section>
+
+        <section class="card game-card">
+            <div class="stats-panel">
+                <div class="stat-box">Очки: <span id="score">0</span></div>
+                <div class="stat-box">Час: <span id="timer">20</span>с</div>
+            </div>
+
+            <!-- Ігрове поле -->
+            <div id="gameArea"></div>
+
+            <div class="controls">
+                <button id="btnStart" class="btn">Почати гру</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Вступ до ШІ та Data Science.</p>
+        </div>
+    </footer>
+
+    <!-- Логіка гри на JavaScript -->
+    <script>
+        const gameArea = document.getElementById('gameArea');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const btnStart = document.getElementById('btnStart');
+
+        let score = 0;
+        let timeLeft = 20;
+        let gameInterval = null;
+        let timerInterval = null;
+        let spawnTimeout = null;
+
+        function getRandomPosition() {
+            const areaWidth = gameArea.clientWidth - 60;
+            const areaHeight = gameArea.clientHeight - 60;
+            const x = Math.floor(Math.random() * Math.max(1, areaWidth));
+            const y = Math.floor(Math.random() * Math.max(1, areaHeight));
+            return { x, y };
+        }
+
+        function createTarget() {
+            // Очищаємо попередній авто-таймер та ігрове поле
+            clearTimeout(spawnTimeout);
+            gameArea.innerHTML = '';
+
+            if (timeLeft <= 0) return;
+
+            const target = document.createElement('div');
+            const isGood = Math.random() > 0.35; // 65% шанс на DATA, 35% на BUG
+
+            target.classList.add('data-target');
+            if (isGood) {
+                target.classList.add('good-data');
+                target.textContent = 'DATA';
+            } else {
+                target.classList.add('bad-data');
+                target.textContent = 'BUG';
+            }
+
+            const pos = getRandomPosition();
+            target.style.left = pos.x + 'px';
+            target.style.top = pos.y + 'px';
+
+            target.addEventListener('click', () => {
+                if (isGood) {
+                    score += 10;
+                } else {
+                    score = Math.max(0, score - 15);
+                }
+                scoreDisplay.textContent = score;
+                createTarget(); // При кліку одразу спавнимо наступний об'єкт
+            });
+
+            gameArea.appendChild(target);
+
+            // Якщо гравець не клікає, об'єкт сам зникає через 900мс і спавниться новий
+            spawnTimeout = setTimeout(() => {
+                createTarget();
+            }, 900);
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 20;
+            scoreDisplay.textContent = score;
+            timerDisplay.textContent = timeLeft;
+            btnStart.disabled = true;
+
+            createTarget();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    clearTimeout(spawnTimeout);
+                    gameArea.innerHTML = '';
+                    btnStart.disabled = false;
+                    alert(`Гра завершена! Ваш результат: ${score} очок.`);
+                }
+            }, 1000);
+        }
+
+        btnStart.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
