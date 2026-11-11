@@ -1,0 +1,4 @@
+# Відповіді користувачів не викладаємо на GitHub
+survey/*.txt
+data/*.db
+.claude/

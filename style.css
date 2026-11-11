@@ -172,3 +172,72 @@ footer {
         font-size: 1.75rem;
     }
 }
+/* 11. Форма опитування та адмін-панель (лаб. 6) */
+.survey-form label {
+    display: block;
+    font-weight: 600;
+    margin: 12px 0 6px;
+}
+
+.survey-form input[type="text"],
+.survey-form input[type="email"],
+.survey-form input[type="password"],
+.survey-form select,
+.survey-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.survey-form fieldset {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 18px;
+}
+
+.survey-form legend {
+    font-weight: 600;
+    padding: 0 6px;
+}
+
+.survey-form label.option {
+    font-weight: 400;
+    margin: 4px 0;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover { background-color: #1d4ed8; }
+.btn-gray { background-color: #64748b; }
+.btn-red { background-color: #dc2626; }
+
+.success { border-left: 5px solid #16a34a; }
+.error { border-left: 5px solid #dc2626; }
+.error-text { color: #dc2626; }
+.muted { color: #64748b; font-size: 0.9rem; }
+.login-form { max-width: 400px; margin: 0 auto; }
+
+.admin-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-bar .btn { margin-top: 0; }
+.styled-table th { width: 45%; }
